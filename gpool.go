@@ -93,9 +93,9 @@ a:
 		case <-pool.context.Done():
 			break a
 		case <-t.C:
-			pool.Log("START", "CheckAvaiable Start")
+			pool.Log("START", "CheckAvaiable")
 			pool.CheckAvaiable()
-			pool.Log("DONE", "CheckAvaiable Start")
+			pool.Log("DONE", "CheckAvaiable")
 		}
 	}
 	pool.shutdownChan <- 1

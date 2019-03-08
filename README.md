@@ -181,7 +181,6 @@ func main() {
 }
 
 func send(i, j int) {
-	time.Sleep(time.Second)
 	conn, err := dial.GetConnection()
 	if err != nil {
 		log.Fatalf("第%d个线程获取连接失败%v", i, err)
@@ -342,7 +341,7 @@ MinPoolSize = 2
 MaxPoolSize = 15
 AcquireRetryAttempts = 5
 AcquireIncrement = 5
-TestDuration = 1000
+TestDuration = 60000
 TestOnGetItem = false
 Debug = false
 
@@ -357,8 +356,6 @@ Debug = false
 module app/general
 
 go 1.12
-
-require github.com/BurntSushi/toml latest
 
 require github.com/cloudfstrife/gpool latest
 ```
