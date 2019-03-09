@@ -113,17 +113,17 @@ omit
 
 ## Config
 
-| 名称                 | 说明                                                     | 类型              | 默认值 |
-| -------------------- | -------------------------------------------------------- | ----------------- | ------ |
-| InitialPoolSize      | initial pool size.										  | int               | 5      |
-| MinPoolSize          | min item in pool.                                        | int               | 2      |
-| MaxPoolSize          | max item in pool.                                        | int               | 15     |
-| AcquireRetryAttempts | retry times when get item Failed.                        | int               | 5      |
-| AcquireIncrement     | create item count when pool is empty.                    | int               | 5      |
-| TestDuration         | interval time between check item avaiable.Unit:Millisecond                             | int               | 1000   |
-| TestOnGetItem        | test avaiable when get item.                               | bool              | false  |
-| Debug                | show debug information.                                             | bool              | false  |
-| Params               | item initial params                                           | map[string]string |        |
+| Name                 | Description                                                      | Type              | Default |
+| -------------------- | ---------------------------------------------------------------- | ----------------- | ------- |
+| InitialPoolSize      | initial pool size.										          | int               | 5       |
+| MinPoolSize          | min item in pool.                                                | int               | 2       |
+| MaxPoolSize          | max item in pool.                                                | int               | 15      |
+| AcquireRetryAttempts | retry times when get item Failed.                                | int               | 5       |
+| AcquireIncrement     | create item count when pool is empty.                            | int               | 5       |
+| TestDuration         | interval time between check item avaiable.Unit:Millisecond       | int               | 1000    |
+| TestOnGetItem        | test avaiable when get item.                                     | bool              | false   |
+| Debug                | show debug information.                                          | bool              | false   |
+| Params               | item initial params                                              | map[string]string |         |
 
 ## Complete Example
 
@@ -183,7 +183,7 @@ func main() {
 func send(i, j int) {
 	conn, err := dial.GetConnection()
 	if err != nil {
-		log.Fatalf("第%d个线程获取连接失败%v", i, err)
+		log.Fatalf("Thread %d get connection failed %v", i, err)
 	}
 	defer dial.CloseConnection(conn)
 	_, err = conn.Write([]byte(fmt.Sprintf("%d %d\n", i, j)))
@@ -236,7 +236,7 @@ func Proc(conn net.Conn, i int) {
 
 		if len(slist) == 2 {
 			if slist[1] == "999" {
-				fmt.Printf("第%d个连接收到消息 : 线程 %s 第 %s 次发送\n", i, slist[0], slist[1])
+				fmt.Printf("Connection %d received : Thread %s Send Times %s \n", i, slist[0], slist[1])
 			}
 		} else {
 			fmt.Println(v)
@@ -276,17 +276,17 @@ func init() {
 	})
 }
 
-//NewConnection 获取新连接
+//NewConnection Create Pool Item 
 func NewConnection() gpool.Item {
 	return &Connection{}
 }
 
-//Connection 连接池对象
+//Connection Pool Item
 type Connection struct {
 	TCPConn net.Conn
 }
 
-//Initial 初始化
+//Initial Initial Item
 func (c *Connection) Initial(params map[string]string) error {
 	con, err := net.Dial("tcp", params["host"]+":"+params["port"])
 	if err != nil {
@@ -296,18 +296,18 @@ func (c *Connection) Initial(params map[string]string) error {
 	return nil
 }
 
-//Destory 销毁连接
+//Destory Destory Item 
 func (c *Connection) Destory() error {
 	return c.TCPConn.Close()
 }
 
-//Check 检查元素连接是否可用
+//Check Check item Avaiable
 func (c *Connection) Check() error {
-	fmt.Println("检查连接可用")
+	fmt.Println("Check item Avaiable")
 	return nil
 }
 
-//GetConnection 获取连接
+//GetConnection Get Item 
 func GetConnection() (net.Conn, error) {
 	item, err := pool.GetOne()
 	if err != nil {
@@ -317,17 +317,17 @@ func GetConnection() (net.Conn, error) {
 	if ok {
 		return con.TCPConn, nil
 	}
-	return nil, errors.New("类型转换错误")
+	return nil, errors.New("Class cast ERROR")
 }
 
-//CloseConnection 关闭连接
+//CloseConnection Close Connection
 func CloseConnection(conn net.Conn) {
 	pool.BackOne(&Connection{
 		TCPConn: conn,
 	})
 }
 
-//ClosePool 关闭连接池
+//ClosePool Shutdown the pool
 func ClosePool() {
 	pool.Shutdown()
 }
