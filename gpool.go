@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-//Pool 池
+//Pool pool class
 type Pool struct {
 	Config       *Config
 	Items        *list.List
@@ -21,14 +21,14 @@ type Pool struct {
 	NewFunc      func() Item
 }
 
-//Item 池元素
+//Item pool item
 type Item interface {
 	Initial(map[string]string) error
 	Destory() error
 	Check() error
 }
 
-//DefaultPool 创建默认配置的池
+//DefaultPool create a pool with default config
 func DefaultPool() *Pool {
 	var result = &Pool{
 		Config:       DefaultConfig(),
@@ -39,7 +39,7 @@ func DefaultPool() *Pool {
 	return result
 }
 
-//Initial 池初始化
+//Initial initial pool
 func (pool *Pool) Initial() {
 	if pool.Config == nil {
 		log.Fatal("pool config is nil")
@@ -51,17 +51,17 @@ func (pool *Pool) Initial() {
 	defer pool.cond.L.Unlock()
 	pool.Items = list.New()
 
-	//初始化池
+	//push item into pool
 	go pool.Extend(pool.Config.InitialPoolSize)
 	pool.cond.Wait()
 
-	//启动状态检查线程
+	//start check avaiable goroutine
 	go pool.StartCheck()
 
 	pool.Log("DONE", "Pool Initial")
 }
 
-//Extend 扩展池中元素数量
+//Extend push item into pool
 func (pool *Pool) Extend(count int) {
 	pool.Log("START", fmt.Sprintf("Extend Count : %d", count))
 
@@ -84,7 +84,7 @@ func (pool *Pool) Extend(count int) {
 	pool.Log("DONE", fmt.Sprintf("Extend Count : %d ,Pool size : %d", count, pool.Items.Len()))
 }
 
-//StartCheck 启动检查元素可用的Goroutine
+//StartCheck start check avaiable goroutine
 func (pool *Pool) StartCheck() {
 	t := time.NewTicker(time.Duration(pool.Config.TestDuration) * time.Millisecond)
 a:
@@ -101,7 +101,7 @@ a:
 	pool.shutdownChan <- 1
 }
 
-//CheckAvaiable 检查可用性
+//CheckAvaiable check item avaiable
 func (pool *Pool) CheckAvaiable() {
 	pool.cond.L.Lock()
 	defer pool.cond.L.Unlock()
@@ -118,7 +118,7 @@ func (pool *Pool) CheckAvaiable() {
 	}
 }
 
-//GetOne 获取元素
+//GetOne get a pool item
 func (pool *Pool) GetOne() (Item, error) {
 	pool.cond.L.Lock()
 	defer pool.cond.L.Unlock()
@@ -153,7 +153,7 @@ func (pool *Pool) GetOne() (Item, error) {
 	}
 }
 
-//BackOne 归还一个连接
+//BackOne  give back a pool item
 func (pool *Pool) BackOne(item Item) {
 	pool.cond.L.Lock()
 	defer pool.cond.L.Unlock()
@@ -168,7 +168,7 @@ func (pool *Pool) BackOne(item Item) {
 	return
 }
 
-//Shutdown 关闭
+//Shutdown shutdown pool
 func (pool *Pool) Shutdown() {
 	pool.cond.L.Lock()
 	defer pool.cond.L.Unlock()
@@ -190,7 +190,7 @@ func (pool *Pool) Shutdown() {
 	pool.Log("DONE", "Shutdown Pool")
 }
 
-//Log 记录日志
+//Log record log
 func (pool *Pool) Log(status, msg string) {
 	if pool.Config.Debug {
 		log.Printf("INFO : [ %5s] %s\n", status, msg)

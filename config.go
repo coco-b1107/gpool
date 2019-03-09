@@ -10,31 +10,31 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-//Config 连接池配置
+//Config pool config
 type Config struct {
-	//InitialPoolSize 初始化池中元素数量，取值应在MinPoolSize与MaxPoolSize之间 Default: 5
+	//InitialPoolSize initial pool size. Default: 5
 	InitialPoolSize int
-	//MinPoolSize 池中保留的最小元素数量 Default: 2
+	//MinPoolSize min item in pool. Default: 2
 	MinPoolSize int
-	//MaxPoolSize 池中保留的最大连元素数量 Default: 15
+	//MaxPoolSize  max item in pool. Default: 15
 	MaxPoolSize int
-	//AcquireRetryAttempts 定义在新连接失败后重复尝试的次数 Default: 5
+	//AcquireRetryAttempts retry times when get item Failed. Default: 5
 	AcquireRetryAttempts int
-	//AcquireIncrement 当池中的元素耗尽时，一次同时创建的元素数 Default: 5
+	//AcquireIncrement  create count item when pool is empty. Default: 5
 	AcquireIncrement int
-	//TestDuration 连接有效性检查间隔，单位毫秒 Default: 1000
+	//TestDuration interval time between check item avaiable. Default: 1000
 	TestDuration int
-	//TestOnGetItem 如果设为true那么在取得元素的同时将校验元素的有效性 Default: false
+	//TestOnGetItem  test avaiable when get item. Default: false
 	TestOnGetItem bool
-	//Debug 显示调试信息 Default: false
+	//Debug show debug information. Default: false
 	Debug bool
-	//Params 元素初始化参数
+	//Params item initial params
 	Params map[string]string
 }
 
 //String String
 func (config *Config) String() string {
-	result := fmt.Sprintf("InitialPoolSize : %d \n MinPoolSize : %d \n MaxPoolSize : %d \n AcquireRetryAttempts : %d \n AcquireIncrement : %d \n TestDuration : %d \n TestOnGetItem : %t \n Debug : %t ",
+	result := fmt.Sprintf("InitialPoolSize : %d \n MinPoolSize : %d \n MaxPoolSize : %d \n AcquireRetryAttempts : %d \n AcquireIncrement : %d \n TestDuration : %d \n TestOnGetItem : %t \n Debug : %t \n",
 		config.InitialPoolSize,
 		config.MinPoolSize,
 		config.MaxPoolSize,
@@ -51,7 +51,7 @@ func (config *Config) String() string {
 	return result
 }
 
-//DefaultConfig 创建默认的配置
+//DefaultConfig create default config
 func DefaultConfig() *Config {
 	return &Config{
 		InitialPoolSize:      5,
@@ -66,7 +66,7 @@ func DefaultConfig() *Config {
 	}
 }
 
-//LoadToml 从toml文件中初始化配置
+//LoadToml load config from toml file
 func (config *Config) LoadToml(tomlLocal string) error {
 	inf, err := os.Stat(tomlLocal)
 	if err != nil {
