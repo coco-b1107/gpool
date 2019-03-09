@@ -20,11 +20,11 @@ type Config struct {
 	MaxPoolSize int
 	//AcquireRetryAttempts retry times when get item Failed. Default: 5
 	AcquireRetryAttempts int
-	//AcquireIncrement  create count item when pool is empty. Default: 5
+	//AcquireIncrement create item count when pool is empty. Default: 5
 	AcquireIncrement int
-	//TestDuration interval time between check item avaiable. Default: 1000
+	//TestDuration interval time between check item avaiable.Unit:Millisecond Default: 1000
 	TestDuration int
-	//TestOnGetItem  test avaiable when get item. Default: false
+	//TestOnGetItem test avaiable when get item. Default: false
 	TestOnGetItem bool
 	//Debug show debug information. Default: false
 	Debug bool

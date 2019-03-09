@@ -1,12 +1,12 @@
 # gpool
 
-library for create pool easy , write in google go language 
+Go语言实现，用于快速构建资源池的库
 
-## USAGE
+## 使用方法
 
-### create pool item struct and implement Item interface 
+### 创建池元素struct并实现Item接口方法
 
-Item interface function list
+需要实现的方法签名列表
 
 ```go
 Initial(map[string]string) error
@@ -14,15 +14,15 @@ Destory() error
 Check() error
 ```
 
-#### example
+#### 示例
 
 ```go
-//Connection pool item struct
+//Connection 连接池对象
 type Connection struct {
 	TCPConn net.Conn
 }
 
-//Initial Initial operation
+//Initial 初始化
 func (c *Connection) Initial(params map[string]string) error {
 	con, err := net.Dial("tcp", params["host"]+":"+params["port"])
 	if err != nil {
@@ -32,28 +32,28 @@ func (c *Connection) Initial(params map[string]string) error {
 	return nil
 }
 
-//Destory Destory operation
+//Destory 销毁连接
 func (c *Connection) Destory() error {
 	return c.TCPConn.Close()
 }
 
-//Check check item avaiable
+//Check 检查元素连接是否可用
 func (c *Connection) Check() error {
 	fmt.Println("检查连接可用")
 	return nil
 }
 ```
 
-### create item factory 
+### 实现创建池元素工厂方法
 
 ```go
-//NewConnection New item 
+//NewConnection 获取新连接
 func NewConnection() gpool.Item {
 	return &Connection{}
 }
 ```
 
-### create Singleton pool 
+### 创建单例模式的Pool
 
 ```go
 var (
@@ -74,10 +74,10 @@ func init() {
 }
 ```
 
-### implement get Item and give back item 
+### 实现获取池元素与归还池元素的方法
 
 ```go
-//GetConnection Get item Connection
+//GetConnection 获取连接
 func GetConnection() (net.Conn, error) {
 	item, err := pool.GetOne()
 	if err != nil {
@@ -90,7 +90,7 @@ func GetConnection() (net.Conn, error) {
 	return nil, errors.New("类型转换错误")
 }
 
-//CloseConnection back item Connection
+//CloseConnection 关闭连接
 func CloseConnection(conn net.Conn) {
 	pool.BackOne(&Connection{
 		TCPConn: conn,
@@ -98,38 +98,38 @@ func CloseConnection(conn net.Conn) {
 }
 ```
 
-### implement close pool
+### 实现关闭池方法
 
 ```
-//ClosePool shutdown the pool
+//ClosePool 关闭连接池
 func ClosePool() {
 	pool.Shutdown()
 }
 ```
 
-### use pool
+### 使用
 
-omit
+略
 
-## Config
+## 配置说明
 
 | 名称                 | 说明                                                     | 类型              | 默认值 |
 | -------------------- | -------------------------------------------------------- | ----------------- | ------ |
-| InitialPoolSize      | initial pool size.										  | int               | 5      |
-| MinPoolSize          | min item in pool.                                        | int               | 2      |
-| MaxPoolSize          | max item in pool.                                        | int               | 15     |
-| AcquireRetryAttempts | retry times when get item Failed.                        | int               | 5      |
-| AcquireIncrement     | create item count when pool is empty.                    | int               | 5      |
-| TestDuration         | interval time between check item avaiable.Unit:Millisecond                             | int               | 1000   |
-| TestOnGetItem        | test avaiable when get item.                               | bool              | false  |
-| Debug                | show debug information.                                             | bool              | false  |
-| Params               | item initial params                                           | map[string]string |        |
+| InitialPoolSize      | 初始化池中元素数量，取值应在MinPoolSize与MaxPoolSize之间 | int               | 5      |
+| MinPoolSize          | 池中保留的最小元素数量                                   | int               | 2      |
+| MaxPoolSize          | 池中保留的最大连元素数量                                 | int               | 15     |
+| AcquireRetryAttempts | 定义在新连接失败后重复尝试的次数                         | int               | 5      |
+| AcquireIncrement     | 当池中的元素耗尽时，一次同时创建的元素数                 | int               | 5      |
+| TestDuration         | 连接有效性检查间隔，单位毫秒                             | int               | 1000   |
+| TestOnGetItem        | 如果设为true那么在取得元素的同时将校验元素的有效性       | bool              | false  |
+| Debug                | 显示调试信息                                             | bool              | false  |
+| Params               | 元素初始化参数                                           | map[string]string |        |
 
-## Complete Example
+## 示例
 
-here is a Complete Example
+下面用一个示例展示这个库的用法
 
-### File Tree 
+### 目录结构
 
 ```
 .
@@ -360,7 +360,7 @@ go 1.12
 require github.com/cloudfstrife/gpool latest
 ```
 
-### RUN & TEST
+### 运行与测试
 
 ```
 go build app/general/cmd/server
