@@ -39,7 +39,7 @@ func (c *Connection) Destory() error {
 
 //Check check item avaiable
 func (c *Connection) Check() error {
-	fmt.Println("检查连接可用")
+	fmt.Println("Check item Avaiable")
 	return nil
 }
 ```
@@ -87,7 +87,7 @@ func GetConnection() (net.Conn, error) {
 	if ok {
 		return con.TCPConn, nil
 	}
-	return nil, errors.New("类型转换错误")
+	return nil, errors.New("Class cast ERROR")
 }
 
 //CloseConnection back item Connection
